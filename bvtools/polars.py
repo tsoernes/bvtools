@@ -32,6 +32,8 @@ def empty_string_to_null(
     """
     Replace empty strings with nulls. If no column(s) are given then all suitable columns are processed.
     """
+    if isinstance(columns, str):
+        columns = [columns]
     # Select string columns
     string_cols = columns if columns else df.select(cs.by_dtype(pl.String)).columns
 
@@ -57,11 +59,13 @@ def empty_string_to_null(
 
 def empty_string_to_null_in_place(
     df: pl.DataFrame, columns: str | list[str] | None = None, verbose: bool = True
-) -> pl.DataFrame:
+):
     """
     Replace empty strings with nulls, in_place.
     If no column(s) are given then all suitable columns are processed.
     """
+    if isinstance(columns, str):
+        columns = [columns]
     # Select string columns
     string_cols = columns if columns else df.select(cs.by_dtype(pl.String)).columns
 
@@ -127,7 +131,7 @@ def unnest_struct_columns(
         new_names = {c: f"{col}{sep}{c}" for c in flattened.columns}
         flattened = flattened.rename(new_names)
         if recurse:
-            flattened = flatten_struct_columns(flattened, recurse=True)
+            flattened = unnest_struct_columns(flattened, recurse=True)
         if verbose:
             new_cols = ", ".join([f"'{c}'" for c in flattened.columns])
             print(f"Flattened '{col}' to {new_cols}")

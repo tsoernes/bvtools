@@ -34,6 +34,18 @@ def git_root() -> Path:
         current = parent
 
 
+def load_root_dotenv(name=".env", override=True, strict=True, verbose=False) -> bool:
+    """Loads the '.env' file at the callers project root."""
+    from dotenv import load_dotenv as _load_dotenv
+
+    root = git_root()
+    dotenv_path = root / name
+    loaded = _load_dotenv(dotenv_path=dotenv_path, override=override, verbose=verbose)
+    if strict and not loaded:
+        raise FileNotFoundError(dotenv_path)
+    return loaded
+
+
 def confirm_action(
     desc="Really execute?",
     yes_func: Callable | None = None,
