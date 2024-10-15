@@ -20,13 +20,13 @@ test = ["astroid (>=1,<2)", "astroid (>=2,<4)", "pytest"]
 
 [[package]]
 name = "betterpathlib"
-version = "0.1.0"
+version = "0.1.4"
 description = "A Path library that is an extension to Python's built-in pathlib.Path."
 optional = false
 python-versions = ">=3.11"
 files = [
-    {file = "betterpathlib-0.1.0-py3-none-any.whl", hash = "sha256:1f13d50407b84c83c6e7d219cb53fe57342b14a243793d6a75c635b6ac730a3d"},
-    {file = "betterpathlib-0.1.0.tar.gz", hash = "sha256:6be05a8a7082ecb7e6c98c644750aee47fdf47c055520b483749eff12c6ec41c"},
+    {file = "betterpathlib-0.1.4-py3-none-any.whl", hash = "sha256:f8204c39d65276cf5c0ce100bf852b552c15616730fc4eff4126f60d5c941381"},
+    {file = "betterpathlib-0.1.4.tar.gz", hash = "sha256:c97135dbf97756eba762db9ea4429869d36ae78f43dd7a2f0e5bcf020a229891"},
 ]
 
 [[package]]
@@ -286,4 +286,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "b107e05dc66eee5d0e2c70fb5d85edea8c70f93ac147d8e14ac8bce34191e4e3"
+content-hash = "ebd66c536f0c3dbde1343f95a55e24588851eaf3dee672cae092c37f058f1b52"
