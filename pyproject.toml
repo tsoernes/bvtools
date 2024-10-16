@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "bvtools"
-version = "0.1.1"
+version = "0.1.2"
 description = "A collection of tools"
 authors = ["Torstein Sørnes <t.soernes@gmail.com>"]
 license = "MIT"
@@ -13,6 +13,10 @@ betterpathlib = "^0.1.4"
 [tool.poetry.group.dev.dependencies]
 ipython = "^8.28.0"
 stackprinter = "^0.2.12"
+
+
+[tool.poetry.group.cli.dependencies]
+fire = "^0.7.0"
 
 [build-system]
 requires = ["poetry-core"]

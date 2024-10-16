@@ -2,7 +2,8 @@
 
 import polars as pl
 import polars.selectors as cs
-from typing import TypeVar, Sequence, Any
+from typing import TypeVar, Sequence, Any, Iterable
+from betterpathlib import Path
 
 T = TypeVar('T', pl.Series, pl.DataFrame)
 
@@ -253,3 +254,7 @@ def first_nonempty_value(s: pl.Series) -> Any:
         return pl.Null
 
 
+
+def get_parquet_len(path: str | Path) -> int:
+    """Return the number of rows in a parquet file without reading it into memory"""
+    return pl.scan_parquet(path).select(pl.count()).collect()[0, 0]
