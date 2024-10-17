@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "bvtools"
-version = "0.1.3"
+version = "0.1.4"
 description = "A collection of tools"
 authors = ["Torstein Sørnes <t.soernes@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = "^3.11"
 betterpathlib = "^0.1.4"
 
 [tool.poetry.group.dev.dependencies]
