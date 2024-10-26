@@ -7,16 +7,8 @@ from collections.abc import Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial, reduce, wraps
 from multiprocessing.pool import AsyncResult, ThreadPool
-from typing import (
-    Any,
-    Awaitable,
-    Callable,
-    Iterable,
-    ParamSpec,
-    Protocol,
-    TypeVar,
-    cast,
-)
+from typing import (Any, Awaitable, Callable, Iterable, ParamSpec, Protocol,
+                    TypeVar, cast)
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -94,7 +86,9 @@ def cleanup_thread_pools() -> None:
     logger.info("Thread pools cleanup completed")
 
 
-def allow_async(threads: int = 1) -> Callable[[Callable[P, R]], Callable[P, R | AsyncResult[R]]]:
+def allow_async(
+    threads: int = 1,
+) -> Callable[[Callable[P, R]], Callable[P, R | AsyncResult[R]]]:
     """
     Decorator that enables threaded execution using a thread pool.
 
@@ -105,14 +99,12 @@ def allow_async(threads: int = 1) -> Callable[[Callable[P, R]], Callable[P, R | 
         A decorated function that accepts an additional `async_` parameter.
         When `async_=True`, returns an AsyncResult.
     """
+
     def decorator(func: Callable[P, R]) -> Callable[P, R | AsyncResult[R]]:
         old_sig = inspect.signature(func)
         params = list(old_sig.parameters.values())
         async_param = inspect.Parameter(
-            "async_",
-            inspect.Parameter.KEYWORD_ONLY,
-            default=False,
-            annotation=bool
+            "async_", inspect.Parameter.KEYWORD_ONLY, default=False, annotation=bool
         )
         params.append(async_param)
         sig = old_sig.replace(parameters=params)
@@ -138,6 +130,7 @@ def allow_async(threads: int = 1) -> Callable[[Callable[P, R]], Callable[P, R | 
 
     return decorator
 
+
 def allow_await(func: Callable[P, R]) -> Callable[P, R | Awaitable[R]]:
     """
     Decorator that enables async/await execution.
@@ -149,10 +142,7 @@ def allow_await(func: Callable[P, R]) -> Callable[P, R | Awaitable[R]]:
     old_sig = inspect.signature(func)
     params = list(old_sig.parameters.values())
     awaitable_param = inspect.Parameter(
-        "awaitable",
-        inspect.Parameter.KEYWORD_ONLY,
-        default=False,
-        annotation=bool
+        "awaitable", inspect.Parameter.KEYWORD_ONLY, default=False, annotation=bool
     )
     params.append(awaitable_param)
     sig = old_sig.replace(parameters=params)
@@ -173,7 +163,6 @@ def allow_await(func: Callable[P, R]) -> Callable[P, R | Awaitable[R]]:
     return wrapper
 
 
-
 eq = curried(operator.eq)
 lt = curried(operator.lt)
 le = curried(operator.le)
@@ -189,9 +178,11 @@ def id_fn[T](x: T) -> T:
     """Identity function that returns its argument unchanged."""
     return x
 
+
 def noop(*_args: Any, **_kwargs: Any) -> None:
     """No operation. Function that does nothing and returns None."""
     pass
+
 
 def fst[T](subscriptable: Sequence[T] | Iterable[T]) -> T:
     """
@@ -215,6 +206,7 @@ def fst[T](subscriptable: Sequence[T] | Iterable[T]) -> T:
         except (TypeError, StopIteration) as e:
             logger.error(f"Failed to get first element: {e}")
             raise
+
 
 def snd[T](subscriptable: Sequence[T] | Iterable[T]) -> T:
     """
@@ -246,6 +238,7 @@ def singleton[T](cls_or_func: Callable[..., T]) -> Callable[..., T]:
     """
     Decorator to implement the singleton pattern.
     """
+
     @wraps(cls_or_func)
     def wrapper_singleton(*args: Any, **kwargs: Any) -> T:
         if not hasattr(wrapper_singleton, "instance"):
@@ -254,6 +247,7 @@ def singleton[T](cls_or_func: Callable[..., T]) -> Callable[..., T]:
 
     return wrapper_singleton
 
+
 @curried
 def str_startswith(
     prefix: str,
@@ -261,7 +255,7 @@ def str_startswith(
     start: int | None = None,
     end: int | None = None,
     case: bool = True,
-    regex: bool = False
+    regex: bool = False,
 ) -> bool:
     """Check if string starts with prefix."""
     if not case:
@@ -275,6 +269,7 @@ def str_startswith(
         return re.match(prefix, string) is not None
     return string.startswith(prefix, start, end)
 
+
 @curried
 def str_endswith(
     suffix: str,
@@ -282,7 +277,7 @@ def str_endswith(
     start: int | None = None,
     end: int | None = None,
     case: bool = True,
-    regex: bool = False
+    regex: bool = False,
 ) -> bool:
     """Check if string ends with suffix."""
     if not case:
@@ -296,8 +291,11 @@ def str_endswith(
         return re.search(suffix + "$", string) is not None
     return string.endswith(suffix, start, end)
 
+
 @curried
-def str_contains(substring: str, string: str, case: bool = True, regex: bool = False) -> bool:
+def str_contains(
+    substring: str, string: str, case: bool = True, regex: bool = False
+) -> bool:
     """Check if string contains substring."""
     if not case:
         substring = substring.lower()
@@ -306,15 +304,18 @@ def str_contains(substring: str, string: str, case: bool = True, regex: bool = F
         return re.search(substring, string) is not None
     return substring in string
 
+
 @curried
 def str_replace(old: str, new: str, string: str) -> str:
     """Replace old with new in string."""
     return string.replace(old, new)
 
+
 @curried
 def not_(pred: Callable[..., bool], *args: Any, **kwargs: Any) -> bool:
     """Returns the negation of calling pred with the given arguments."""
     return not pred(*args, **kwargs)
+
 
 def itemgetters(*items: str) -> Callable[[Mapping[str, T]], T]:
     """
@@ -325,12 +326,15 @@ def itemgetters(*items: str) -> Callable[[Mapping[str, T]], T]:
         >>> f({'a': {'b': 2}})
         2
     """
+
     def getter(obj: Mapping[str, Any]) -> Any:
         result = obj
         for item in items:
             result = result[item]
         return result
+
     return getter
+
 
 @curried
 def in_[T](collection: Iterable[T], item: T) -> bool:
@@ -340,6 +344,7 @@ def in_[T](collection: Iterable[T], item: T) -> bool:
     except TypeError:
         return False
 
+
 @curried
 def has[T](item: T, collection: Iterable[T]) -> bool:
     """Check if collection has item."""
@@ -347,6 +352,7 @@ def has[T](item: T, collection: Iterable[T]) -> bool:
         return item in collection
     except TypeError:
         return False
+
 
 @curried
 def not_in[T](collection: Iterable[T], item: T) -> bool:
@@ -356,55 +362,66 @@ def not_in[T](collection: Iterable[T], item: T) -> bool:
     except TypeError:
         return False
 
+
 @curried
 def is_(b: Any, a: Any) -> bool:
     """Check if a is b."""
     return a is b
+
 
 @curried
 def is_not(b: Any, a: Any) -> bool:
     """Check if a is not b."""
     return a is not b
 
+
 @curried
 def attr_eq(attr: str, val: Any, obj: Any) -> bool:
     """Check if object's attribute equals value."""
     return getattr(obj, attr) == val
+
 
 @curried
 def attr_neq(attr: str, val: Any, obj: Any) -> bool:
     """Check if object's attribute does not equal value."""
     return getattr(obj, attr) != val
 
+
 @curried
 def attr_is(attr: str, val: Any, obj: Any) -> bool:
     """Check if object's attribute is value."""
     return getattr(obj, attr) is val
+
 
 @curried
 def attr_is_not(attr: str, val: Any, obj: Any) -> bool:
     """Check if object's attribute is not value."""
     return getattr(obj, attr) is not val
 
+
 @curried
 def itemget_eq(key: Any, val: Any, obj: Mapping[Any, Any]) -> bool:
     """Check if object[key] equals value."""
     return obj[key] == val
+
 
 @curried
 def itemget_neq(key: Any, val: Any, obj: Mapping[Any, Any]) -> bool:
     """Check if object[key] does not equal value."""
     return obj[key] != val
 
+
 @curried
 def itemget_is(key: Any, val: Any, obj: Mapping[Any, Any]) -> bool:
     """Check if object[key] is value."""
     return obj[key] is val
 
+
 @curried
 def itemget_is_not(key: Any, val: Any, obj: Mapping[Any, Any]) -> bool:
     """Check if object[key] is not value."""
     return obj[key] is not val
+
 
 def avg(iterable: Iterable[float | int]) -> float:
     """Calculate the average of an iterable of numbers."""
@@ -417,10 +434,12 @@ def avg(iterable: Iterable[float | int]) -> float:
         raise ValueError("Cannot calculate average of empty iterable")
     return total / count
 
+
 @curried
 def list_append[T](item: T, lst: list[T]) -> None:
     """Append item to list."""
     lst.append(item)
+
 
 @curried
 def list_append_unique[T](item: T, lst: list[T]) -> None:
@@ -428,10 +447,12 @@ def list_append_unique[T](item: T, lst: list[T]) -> None:
     if item not in lst:
         lst.append(item)
 
+
 @curried
 def list_extend[T](items: Iterable[T], lst: list[T]) -> None:
     """Extend list with items if it is a list."""
     lst.extend(items)
+
 
 @curried
 def list_remove[T](value: T, lst: list[T]) -> None:
@@ -441,32 +462,33 @@ def list_remove[T](value: T, lst: list[T]) -> None:
     except ValueError:
         pass
 
+
 @curried
 def set_union[T](set1: set[T], set2: set[T]) -> set[T]:
     """Return the union of two sets."""
     return set1.union(set2)
+
 
 @curried
 def set_isdisjoint[T](set1: set[T], set2: set[T]) -> bool:
     """Check if two sets are disjoint."""
     return set1.isdisjoint(set2)
 
+
 @curried
 def set_isunion[T](set1: set[T], set2: set[T]) -> bool:
     """Check if two sets have a non-empty intersection."""
     return not set1.isdisjoint(set2)
+
 
 @curried
 def set_issubset[T](set1: set[T], set2: set[T]) -> bool:
     """Check if set1 is a subset of set2."""
     return set1.issubset(set2)
 
+
 @curried
-def dict_get(
-    *keys: Any,
-    default: Any = None,
-    di: dict[Any, Any] = {}
-) -> Any:
+def dict_get(*keys: Any, default: Any = None, di: dict[Any, Any] = {}) -> Any:
     """
     Get value from dictionary using multiple possible keys.
     Returns the first matching value or default if none found.
@@ -475,6 +497,7 @@ def dict_get(
         if key in di:
             return di[key]
     return default
+
 
 def dict_set(
     di: dict[Any, Any],
@@ -499,12 +522,14 @@ def chainf(*funcs: Callable) -> Callable:
     """
     Chain functions, passing the result of each to the next.
     """
+
     @wraps(funcs[0])
     def inner(*args: Any, **kwargs: Any) -> Any:
         res = funcs[0](*args, **kwargs)
         for func in funcs[1:]:
             res = func(res)
         return res
+
     return inner
 
 
@@ -515,9 +540,12 @@ def rgetattr(obj: Any, attr: str, *args: Any) -> Any:
     Example:
         >>> rgetattr(obj, 'attr.subattr')
     """
+
     def _getattr(obj: Any, attr: str) -> Any:
         return getattr(obj, attr, *args)
+
     return reduce(_getattr, [obj] + attr.split("."))
+
 
 def rsetattr(obj: Any, attr: str, val: Any) -> None:
     """
@@ -527,3 +555,14 @@ def rsetattr(obj: Any, attr: str, val: Any) -> None:
     """
     pre, _, post = attr.rpartition(".")
     return setattr(rgetattr(obj, pre) if pre else obj, post, val)
+
+
+@curried
+def get_attr_or_key(object, *attr_or_key: str) -> Any:
+    """Recursively get attrs or keys"""
+    for attr_key in attr_or_key:
+        if isinstance(object, Mapping):
+            object = object[attr_key]
+        else:
+            object = getattr(object, attr_key)
+    return object
