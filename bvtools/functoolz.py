@@ -3,6 +3,7 @@ import inspect
 import logging
 import operator
 import re
+from argparse import ArgumentError
 from collections.abc import Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial, reduce, wraps
@@ -533,6 +534,7 @@ def chainf(*funcs: Callable) -> Callable:
     return inner
 
 
+@curried
 def rgetattr(obj: Any, attr: str, *args: Any) -> Any:
     """
     Recursively get nested attributes.
@@ -547,6 +549,7 @@ def rgetattr(obj: Any, attr: str, *args: Any) -> Any:
     return reduce(_getattr, [obj] + attr.split("."))
 
 
+@curried
 def rsetattr(obj: Any, attr: str, val: Any) -> None:
     """
     Recursively set nested attributes.
@@ -558,8 +561,19 @@ def rsetattr(obj: Any, attr: str, val: Any) -> None:
 
 
 @curried
-def get_attr_or_key(object, *attr_or_key: str) -> Any:
-    """Recursively get attrs or keys"""
+def rget_attr_or_key(object, *attr_or_key: str) -> Any:
+    """
+    Recursively get attrs or keys
+
+    Example:
+        >>> from dataclasses import dataclass
+        >>> @dataclass
+        >>> class Obj:
+        >>>     di: dict
+        >>> obj = Obj({"level1": {"level2": "value"}})
+        >>> value = get_attr_or_key(obj, "di", "level1", "level2")
+
+    """
     if len(attr_or_key) == 1:
         attr_or_key = tuple(attr_or_key[0].split("."))
     for attr_key in attr_or_key:
@@ -567,4 +581,30 @@ def get_attr_or_key(object, *attr_or_key: str) -> Any:
             object = object[attr_key]
         else:
             object = getattr(object, attr_key)
+    return object
+
+
+@curried
+def rset_attr_or_key(object, value, attr_or_key: str, *attr_or_keys: str) -> Any:
+    """
+    Recursively set attrs or keys
+
+    Example:
+        >>> from dataclasses import dataclass
+        >>> @dataclass
+        >>> class Obj:
+        >>>     di: dict
+        >>> obj = Obj({"level1": {"level2": "value"}})
+        >>> value = get_attr_or_key(obj, "di", "level1", "level2")
+
+    """
+    if len(attr_or_key) == 0:
+        raise ValueError("No attr or key")
+    if len(attr_or_keys) == 0:
+        aks = attr_or_key.split(".")
+        attr_or_key, attr_or_keys = aks[0], tuple(aks[1:])
+    if len(attr_or_keys):
+        object = rget_attr_or_key(attr_or_keys)
+        object = setattr(object, attr_or_key, value)
+    object = setattr(object, attr_or_key, value)
     return object
