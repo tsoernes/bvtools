@@ -560,6 +560,8 @@ def rsetattr(obj: Any, attr: str, val: Any) -> None:
 @curried
 def get_attr_or_key(object, *attr_or_key: str) -> Any:
     """Recursively get attrs or keys"""
+    if len(attr_or_key) == 1:
+        attr_or_key = tuple(attr_or_key[0].split("."))
     for attr_key in attr_or_key:
         if isinstance(object, Mapping):
             object = object[attr_key]
