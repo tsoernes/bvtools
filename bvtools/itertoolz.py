@@ -420,7 +420,7 @@ def dict_pos(di: dict[K, float]) -> dict[K, float]:
 
 
 @curried
-def map_dict_get(di, iterable) -> list:
+def map_dict_get(di: dict[K, V], iterable: Iterable[K]) -> list[V]:
     """
     Retrieve values from a dictionary for a given iterable of keys.
 

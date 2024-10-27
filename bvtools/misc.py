@@ -8,14 +8,25 @@ from betterpathlib import Path
 def load_root_dotenv(
     name: Path | str | None = None,
     ignore_env_re: str | None = "example",
-    override=True,
-    strict=True,
-    verbose=False,
+    override: bool = True,
+    strict: bool = True,
+    verbose: bool = False,
 ) -> bool:
     """
-    Locate the directory of the caller function. Look for files with '.env' suffix.
-    If there are any, that `ignore_env_re` do not match, then load it. If not,
-    iterate upwards the directory tree until one is found.
+    Load the environment variables from a .env file located in the caller's directory or its parents.
+
+    Args:
+        name (Path | None): Specific path to the .env file.
+        ignore_env_re (str | None): Regex pattern to ignore certain .env files.
+        override (bool): Whether to override existing environment variables.
+        strict (bool): If True, raises an error if no .env file is found.
+        verbose (bool): If True, prints loading messages.
+
+    Returns:
+        bool: True if the .env file was loaded successfully, False otherwise.
+
+    Raises:
+        ValueError: If no .env file is found and strict is True.
 
     """
     from dotenv import load_dotenv as _load_dotenv
@@ -71,13 +82,22 @@ def load_root_dotenv(
 
 
 def confirm_action(
-    desc="Really execute?",
+    desc: str = "Really execute?",
     yes_func: Callable | None = None,
     no_func: Callable | None = None,
-    enter_is_yes=False,
+    enter_is_yes: bool = False,
 ) -> bool:
     """
-    Return True if user confirms with 'Y' input
+    Prompt the user for confirmation before executing an action.
+
+    Args:
+        desc (str): Description of the action to confirm.
+        yes_func (Callable | None): Function to call if the user confirms.
+        no_func (Callable | None): Function to call if the user declines.
+        enter_is_yes (bool): If True, pressing Enter counts as a 'yes'.
+
+    Returns:
+        bool: True if the action is confirmed, False otherwise.
     """
     if desc == "Really execute?" and yes_func:
         desc = f"Really execute {yes_func.__name__}?"
