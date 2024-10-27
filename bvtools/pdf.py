@@ -1,3 +1,8 @@
+"""
+Tools and utilities for working with PDF files.
+Some require that `qpdf` is installed on the system
+"""
+
 import re
 import subprocess
 
@@ -48,24 +53,28 @@ def split_pdf(
                 break
             max_pages = max_pages // 2
             for path in big_pdfs:
-                output_path_ = output_dir / path.with_stem(path.stem + f"_split_%d")
+                output_path_ = output_dir / path.with_stem(path.stem + "_split_%d")
                 split(path, output_path_, max_pages)
                 path.unlink()
 
     return sorted(list(output_dir.glob("page_*")))
 
 
-def extract_pages(path: Path, pages: int | str) -> Path:
+def extract_pages(path: Path | str, pages: int | str) -> Path:
     """
+    Extract given page, pages, or page range from a PDF file to a new file.
+    Return the Path of the extracted PDF file
+
     pages: e.g. '6' or '6-10'
     """
+    path = Path(path)
     pages = str(pages)
     out_path = path.with_stem(path.stem + f"_pages_{pages}")
     if not path.exists():
-        raise FileNotFoundError
+        raise FileNotFoundError(path)
     if out_path.exists():
         return out_path
-    cmd = ["qpdf", path, "--pages", ".", pages, "--", out_path]
+    cmd = ["qpdf", str(path), "--pages", ".", pages, "--", str(out_path)]
     subprocess.run(cmd, check=True)
     return out_path
 
