@@ -4,9 +4,8 @@ from concurrent.futures import ThreadPoolExecutor
 from itertools import chain, islice
 from multiprocessing import Pool, cpu_count
 from operator import itemgetter
-from typing import (Any, Callable, Collection, Dict, Generator, Iterable,
-                    Iterator, List, Optional, Set, Sized, Tuple, TypeVar,
-                    Union, overload)
+from typing import (Any, Callable, Collection, Generator, Iterable, Iterator,
+                    Sized, TypeVar, overload)
 
 from bvtools.functoolz import curried
 
@@ -20,7 +19,7 @@ X = TypeVar("X")
 @curried
 def map_mp(
     fn: Callable[[V], W], seq: Iterable[V], n_concurrent: int = cpu_count()
-) -> List[W]:
+) -> list[W]:
     """
     Apply a function to each item in a sequence using multiple processes.
 
@@ -58,7 +57,7 @@ def map_mt(
 @curried
 def starmap_mp(
     fn: Callable[..., W], seq: Iterable[Iterable[Any]], n_concurrent: int = cpu_count()
-) -> List[W]:
+) -> list[W]:
     """
     Apply a function to each item in a sequence of tuples using multiple processes.
 
@@ -109,7 +108,7 @@ def starmap_mt(
 
 
 @curried
-def itemmap(fn: Callable[[K, V], W], di: Dict[K, V]) -> Dict[K, W]:
+def itemmap(fn: Callable[[K, V], W], di: dict[K, V]) -> dict[K, W]:
     """
     Map a function over each (key, value) pair in a dictionary.
 
@@ -125,8 +124,8 @@ def itemmap(fn: Callable[[K, V], W], di: Dict[K, V]) -> Dict[K, W]:
 
 @curried
 def itemmap_mp(
-    fn: Callable[[K, V], W], di: Dict[K, V], n_concurrent: int = cpu_count()
-) -> Dict[K, W]:
+    fn: Callable[[K, V], W], di: dict[K, V], n_concurrent: int = cpu_count()
+) -> dict[K, W]:
     """
     Map a function over each (key, value) pair in a dictionary using multiple processes.
 
@@ -144,8 +143,8 @@ def itemmap_mp(
 
 @curried
 def itemmap_mt(
-    fn: Callable[[K, V], W], di: Dict[K, V], n_concurrent: int = cpu_count()
-) -> Dict[K, W]:
+    fn: Callable[[K, V], W], di: dict[K, V], n_concurrent: int = cpu_count()
+) -> dict[K, W]:
     """
     Map a function over each (key, value) pair in a dictionary using multiple threads.
 
@@ -162,7 +161,7 @@ def itemmap_mt(
 
 
 @curried
-def valuemap(fn: Callable[[V], W], di: Dict[K, V]) -> Dict[K, W]:
+def valuemap(fn: Callable[[V], W], di: dict[K, V]) -> dict[K, W]:
     """
     Map a function over each value in a dictionary.
 
@@ -178,8 +177,8 @@ def valuemap(fn: Callable[[V], W], di: Dict[K, V]) -> Dict[K, W]:
 
 @curried
 def valuemap_mp(
-    fn: Callable[[V], W], di: Dict[K, V], n_concurrent: int = cpu_count()
-) -> Dict[K, W]:
+    fn: Callable[[V], W], di: dict[K, V], n_concurrent: int = cpu_count()
+) -> dict[K, W]:
     """
     Map a function over each value in a dictionary using multiple processes.
 
@@ -197,8 +196,8 @@ def valuemap_mp(
 
 @curried
 def valuemap_mt(
-    fn: Callable[[V], W], di: Dict[K, V], n_concurrent: int = cpu_count()
-) -> Dict[K, W]:
+    fn: Callable[[V], W], di: dict[K, V], n_concurrent: int = cpu_count()
+) -> dict[K, W]:
     """
     Map a function over each value in a dictionary using multiple threads.
 
@@ -215,7 +214,7 @@ def valuemap_mt(
 
 
 @curried
-def keymap(fn: Callable[[K], W], di: Dict[K, V]) -> Dict[W, V]:
+def keymap(fn: Callable[[K], W], di: dict[K, V]) -> dict[W, V]:
     """
     Map a function over each key in a dictionary.
 
@@ -231,8 +230,8 @@ def keymap(fn: Callable[[K], W], di: Dict[K, V]) -> Dict[W, V]:
 
 @curried
 def keymap_mp(
-    fn: Callable[[K], W], di: Dict[K, V], n_concurrent: int = cpu_count()
-) -> Dict[W, V]:
+    fn: Callable[[K], W], di: dict[K, V], n_concurrent: int = cpu_count()
+) -> dict[W, V]:
     """
     Map a function over each key in a dictionary using multiple processes.
 
@@ -250,8 +249,8 @@ def keymap_mp(
 
 @curried
 def keymap_mt(
-    fn: Callable[[K], W], di: Dict[K, V], n_concurrent: int = cpu_count()
-) -> Dict[W, V]:
+    fn: Callable[[K], W], di: dict[K, V], n_concurrent: int = cpu_count()
+) -> dict[W, V]:
     """
     Map a function over each key in a dictionary using multiple threads.
 
@@ -269,8 +268,8 @@ def keymap_mt(
 
 @curried
 def listmap_dict(
-    fn: Callable[[K, V], W], di: Dict[K, Collection[V]], n_concurrent: int = cpu_count()
-) -> Dict[K, List[W]]:
+    fn: Callable[[K, V], W], di: dict[K, Collection[V]], n_concurrent: int = cpu_count()
+) -> dict[K, list[W]]:
     """
     Map a function over each (key, iterable element) pair in a dictionary.
 
@@ -297,9 +296,9 @@ def listmap_dict(
 @curried
 def flatmap_dict(
     fn: Callable[[K, V], Iterable[W]],
-    di: Dict[K, Collection[V]],
+    di: dict[K, Collection[V]],
     n_concurrent: int = cpu_count(),
-) -> Dict[K, List[W]]:
+) -> dict[K, list[W]]:
     """
     Apply a function that returns an iterable over each (key, list element) pair in a dictionary.
 
@@ -325,7 +324,7 @@ def flatmap_dict(
 
 
 @curried
-def map_to_dict(fn: Callable[[K], V], seq: Iterable[K]) -> Dict[K, V]:
+def map_to_dict(fn: Callable[[K], V], seq: Iterable[K]) -> dict[K, V]:
     """
     Apply a function to each item in a sequence and return a dictionary.
 
@@ -342,7 +341,7 @@ def map_to_dict(fn: Callable[[K], V], seq: Iterable[K]) -> Dict[K, V]:
 @curried
 def map_to_dict_mp(
     fn: Callable[[K], V], seq: Iterable[K], n_concurrent: int = cpu_count()
-) -> Dict[K, V]:
+) -> dict[K, V]:
     """
     Apply a function to each item in a sequence using multiple processes and return a dictionary.
 
@@ -362,7 +361,7 @@ def map_to_dict_mp(
 @curried
 def map_to_dict_mt(
     fn: Callable[[K], V], seq: Iterable[K], n_concurrent: int = cpu_count()
-) -> Dict[K, V]:
+) -> dict[K, V]:
     """
     Apply a function to each item in a sequence using multiple threads and return a dictionary.
 
@@ -380,7 +379,7 @@ def map_to_dict_mt(
 
 
 @curried
-def dict_sample(di: Dict[K, V], n_samples: int = 1) -> Dict[K, V]:
+def dict_sample(di: dict[K, V], n_samples: int = 1) -> dict[K, V]:
     """
     Return a randomly selected subset from the given dictionary.
 
@@ -394,7 +393,7 @@ def dict_sample(di: Dict[K, V], n_samples: int = 1) -> Dict[K, V]:
     return {k: di[k] for k in random.sample(di.keys(), n_samples)}
 
 
-def dict_max(di: Dict[K, V]) -> Tuple[K, V]:
+def dict_max(di: dict[K, V]) -> tuple[K, V]:
     """
     Return the key-item pair with the maximum item value from a dictionary.
 
@@ -407,7 +406,7 @@ def dict_max(di: Dict[K, V]) -> Tuple[K, V]:
     return max(di.items(), key=itemgetter(1))
 
 
-def dict_pos(di: Dict[K, float]) -> Dict[K, float]:
+def dict_pos(di: dict[K, float]) -> dict[K, float]:
     """
     Return key-item pairs with positive item values from a dictionary.
 
@@ -421,7 +420,7 @@ def dict_pos(di: Dict[K, float]) -> Dict[K, float]:
 
 
 @curried
-def map_dict_get(di, iterable) -> List:
+def map_dict_get(di, iterable) -> list:
     """
     Retrieve values from a dictionary for a given iterable of keys.
 
@@ -440,7 +439,7 @@ class IxGetter:
     Initialize with a dictionary; access dictionary items by numerical index (zero copy).
     """
 
-    def __init__(self, di: Dict[K, V]):
+    def __init__(self, di: dict[K, V]):
         self.dik = list(di.keys())
         self.div = list(di.values())
 
@@ -477,7 +476,7 @@ class IxGetter:
         """
         return self.dik[ix]
 
-    def keys(self) -> List[K]:
+    def keys(self) -> list[K]:
         """
         Retrieve all keys in the dictionary.
 
@@ -496,7 +495,7 @@ class IxGetter:
         return zip(self.dik, self.div)
 
 
-def rename_dict_keys(di: Dict, mapping: Dict, allow_missing: bool = True) -> None:
+def rename_dict_keys(di: dict, mapping: dict, allow_missing: bool = True) -> None:
     """
     Rename keys in a dictionary based on a mapping.
 
@@ -515,7 +514,7 @@ def rename_dict_keys(di: Dict, mapping: Dict, allow_missing: bool = True) -> Non
             di[new_key] = di.pop(old_key)
 
 
-def sort_di_values_by_key(di: Dict[K, V]) -> List[V]:
+def sort_di_values_by_key(di: dict[K, V]) -> list[V]:
     """
     Sort a dictionary by its keys and return its values.
 
@@ -529,7 +528,7 @@ def sort_di_values_by_key(di: Dict[K, V]) -> List[V]:
 
 
 @curried
-def filter_di(pred: Callable[[K], bool], di: Dict[K, V]) -> Dict[K, V]:
+def filter_di(pred: Callable[[K], bool], di: dict[K, V]) -> dict[K, V]:
     """
     Filter a dictionary by a predicate on its keys.
 
@@ -544,7 +543,7 @@ def filter_di(pred: Callable[[K], bool], di: Dict[K, V]) -> Dict[K, V]:
 
 
 @curried
-def filter_di_vals(pred: Callable[[V], bool], di: Dict[K, V]) -> Dict[K, V]:
+def filter_di_vals(pred: Callable[[V], bool], di: dict[K, V]) -> dict[K, V]:
     """
     Filter a dictionary by a predicate on its values.
 
@@ -559,7 +558,7 @@ def filter_di_vals(pred: Callable[[V], bool], di: Dict[K, V]) -> Dict[K, V]:
 
 
 @curried
-def filter_di_items(pred: Callable[[K, V], bool], di: Dict[K, V]) -> Dict[K, V]:
+def filter_di_items(pred: Callable[[K, V], bool], di: dict[K, V]) -> dict[K, V]:
     """
     Filter a dictionary by a predicate on its key-value pairs.
 
@@ -574,7 +573,7 @@ def filter_di_items(pred: Callable[[K, V], bool], di: Dict[K, V]) -> Dict[K, V]:
 
 
 @curried
-def lfilter(pred: Callable[[V], bool], iterable: Iterable[V]) -> List[V]:
+def lfilter(pred: Callable[[V], bool], iterable: Iterable[V]) -> list[V]:
     """
     Filter an iterable based on a predicate and return a list.
 
@@ -589,7 +588,7 @@ def lfilter(pred: Callable[[V], bool], iterable: Iterable[V]) -> List[V]:
 
 
 @curried
-def lfilterfalse(pred: Callable[[V], bool], iterable: Iterable[V]) -> List[V]:
+def lfilterfalse(pred: Callable[[V], bool], iterable: Iterable[V]) -> list[V]:
     """
     Filter an iterable based on the negation of a predicate and return a list.
 
@@ -606,7 +605,7 @@ def lfilterfalse(pred: Callable[[V], bool], iterable: Iterable[V]) -> List[V]:
 @curried
 def lfiltermap(
     pred: Callable[[V], bool], fn: Callable[[V], W], iterable: Iterable[V]
-) -> List[W]:
+) -> list[W]:
     """
     Filter an iterable based on a predicate, then map a function over the filtered items.
 
@@ -642,7 +641,7 @@ def filtermap(
 @curried
 def lmapfilter(
     fn: Callable[[V], W], pred: Callable[[W], bool], iterable: Iterable[V]
-) -> List[W]:
+) -> list[W]:
     """
     Map a function over an iterable, then filter the results based on a predicate.
 
@@ -678,7 +677,7 @@ def mapfilter(
 @curried
 def lmapfilterfalse(
     fn: Callable[[V], W], pred: Callable[[W], bool], iterable: Iterable[V]
-) -> List[W]:
+) -> list[W]:
     """
     Map a function over an iterable, then filter the results based on the negation of a predicate.
 
@@ -742,7 +741,7 @@ def allmap(fn: Callable[[V], W], iterable: Iterable[V]) -> bool:
 
 
 @curried
-def smap(fn: Callable[[V], W], iterable: Iterable[V]) -> Set[W]:
+def smap(fn: Callable[[V], W], iterable: Iterable[V]) -> set[W]:
     """
     Apply a function to each item in an iterable and return a set of results.
 
@@ -757,7 +756,7 @@ def smap(fn: Callable[[V], W], iterable: Iterable[V]) -> Set[W]:
 
 
 @curried
-def lmap(fn: Callable[[V], W], iterable: Iterable[V]) -> List[W]:
+def lmap(fn: Callable[[V], W], iterable: Iterable[V]) -> list[W]:
     """
     Apply a function to each item in an iterable and return a list of results.
 
@@ -774,7 +773,7 @@ def lmap(fn: Callable[[V], W], iterable: Iterable[V]) -> List[W]:
 @curried
 def lmap2(
     fn1: Callable[[W], X], fn2: Callable[[V], W], iterable: Iterable[V]
-) -> List[X]:
+) -> list[X]:
     """
     Apply one function after another over each item in an iterable and return a list of results.
 
@@ -901,7 +900,7 @@ def tail(iterable: Iterable[V]) -> Iterator[V]:
     return iter_
 
 
-def peek(iterable: Iterable[V]) -> Tuple[V, Iterable[V]]:
+def peek(iterable: Iterable[V]) -> tuple[V, Iterable[V]]:
     """
     Return the first item of the iterable, and the iterable itself, unchanged.
 
@@ -941,10 +940,10 @@ def chunks(iterable, size):
 def map_partitions(
     fn: Callable[[Iterable[V]], Iterable[W]],
     iterable: Iterable[V],
-    iter_len_hint: Optional[int] = None,
-    partition_size: Optional[int] = None,
+    iter_len_hint: int | None = None,
+    partition_size: int | None = None,
     n_concurrent: int = cpu_count(),
-) -> List[W]:
+) -> list[W]:
     """
     Split the iterable into chunks and apply a function to each chunk in parallel.
 
@@ -1000,7 +999,7 @@ def find(
 def find_all(
     pred: Callable[[V], bool],
     iterable: Iterable[V],
-) -> List[V]:
+) -> list[V]:
     """
     Retrieve all items from an iterable that match a predicate.
 
@@ -1019,7 +1018,7 @@ def find_all(
     pred: Callable[[W], bool] | Callable[[V], bool],
     iterable: Iterable[V],
     key: Callable[[V], W],
-) -> List[V]:
+) -> list[V]:
     """
     Retrieve all items from an iterable that match a predicate, with an optional key function.
 
@@ -1038,7 +1037,7 @@ def find_all(
     pred: Callable,
     iterable: Iterable[V],
     key: Any | None = None,
-) -> List[V]:
+) -> list[V]:
     """
     Retrieve all items from an iterable that match a predicate.
 
@@ -1079,9 +1078,9 @@ def consume(iterator: Iterator, n: int | None = None):
 def find_ix(
     pred: Callable[[V], bool] | Callable[[W], bool],
     iterable: Iterable[V],
-    key: Optional[Callable[[V], W]] = None,
+    key: Callable[[V], W] | None = None,
     default: X = None,
-) -> Union[int, X]:
+) -> int | X:
     """
     Retrieve the index of the first item in an iterable that matches a predicate.
 
@@ -1109,8 +1108,8 @@ def find_ix(
 def find_ixs(
     pred: Callable[[W], bool],
     iterable: Iterable[V],
-    key: Optional[Callable[[V], W]] = None,
-) -> List[int]:
+    key: Callable[[V], W] | None = None,
+) -> list[int]:
     """
     Retrieve the indices of all items in an iterable that match a predicate.
 
@@ -1134,7 +1133,7 @@ def find_ixs(
     return hits
 
 
-def nested_children_of(xx, include_keys=True) -> Set:
+def nested_children_of(xx, include_keys=True) -> set:
     """
     Retrieve all nested children from a structure, optionally including keys.
 
@@ -1169,7 +1168,7 @@ def nested_children_of(xx, include_keys=True) -> Set:
 @curried
 def split_by_pred(
     data: Iterable[V], pred: Callable[[V], bool]
-) -> Tuple[List[V], List[V]]:
+) -> tuple[list[V], list[V]]:
     """
     Split an iterable into two lists based on a predicate function.
 
