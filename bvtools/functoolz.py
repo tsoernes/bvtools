@@ -1,5 +1,6 @@
 import atexit
 import inspect
+import itertools
 import logging
 import operator
 import re
@@ -584,7 +585,6 @@ def rget_attr_or_key(object, *attr_or_key: str) -> Any:
     return object
 
 
-@curried
 def rset_attr_or_key(object, value, attr_or_key: str, *attr_or_keys: str) -> Any:
     """
     Recursively set attrs or keys
@@ -595,16 +595,30 @@ def rset_attr_or_key(object, value, attr_or_key: str, *attr_or_keys: str) -> Any
         >>> class Obj:
         >>>     di: dict
         >>> obj = Obj({"level1": {"level2": "value"}})
-        >>> value = get_attr_or_key(obj, "di", "level1", "level2")
-
+        >>> obj = rset_attr_or_key(obj, "newvalue", "di", "level1", "level2")i
+        Obj(di={'level1': {'level2': 'newvalue'}})
     """
-    if len(attr_or_key) == 0:
-        raise ValueError("No attr or key")
-    if len(attr_or_keys) == 0:
-        aks = attr_or_key.split(".")
-        attr_or_key, attr_or_keys = aks[0], tuple(aks[1:])
-    if len(attr_or_keys):
-        object = rget_attr_or_key(attr_or_keys)
-        object = setattr(object, attr_or_key, value)
-    object = setattr(object, attr_or_key, value)
+    # If there are more keys, recurse
+    if attr_or_keys:
+        next_attr_or_key = attr_or_keys[0]
+        next_object = (
+            getattr(object, attr_or_key)
+            if hasattr(object, attr_or_key)
+            else object[attr_or_key]
+        )
+        # Recursively call with the next attribute/key
+        new_next_object = rset_attr_or_key(
+            next_object, value, next_attr_or_key, *attr_or_keys[1:]
+        )
+        # Set the modified object back
+        if hasattr(object, attr_or_key):
+            setattr(object, attr_or_key, new_next_object)
+        else:
+            object[attr_or_key] = new_next_object
+    else:
+        # Set the final value
+        if hasattr(object, attr_or_key):
+            setattr(object, attr_or_key, value)
+        else:
+            object[attr_or_key] = value
     return object
