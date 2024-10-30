@@ -60,7 +60,7 @@ def split_pdf(
     return sorted(list(output_dir.glob("page_*")))
 
 
-def extract_pages(path: Path | str, pages: int | str) -> Path:
+def extract_pages(path: Path | str, pages: int | str, output_dir: Path | str | None = None) -> Path:
     """
     Extract given page, pages, or page range from a PDF file to a new file.
     Return the Path of the extracted PDF file
@@ -69,14 +69,18 @@ def extract_pages(path: Path | str, pages: int | str) -> Path:
     """
     path = Path(path)
     pages = str(pages)
-    out_path = path.with_stem(path.stem + f"_pages_{pages}")
     if not path.exists():
         raise FileNotFoundError(path)
-    if out_path.exists():
-        return out_path
-    cmd = ["qpdf", str(path), "--pages", ".", pages, "--", str(out_path)]
+    if output_dir:
+        output_dir = Path(output_dir)
+    else:
+        output_dir = path.parent
+    output_path = output_dir / (path.stem + f"_pages_{pages}")
+    if output_path.exists():
+        return output_path
+    cmd = ["qpdf", str(path), "--pages", ".", pages, "--", str(output_path)]
     subprocess.run(cmd, check=True)
-    return out_path
+    return output_path
 
 
 if __name__ == "__main__":
