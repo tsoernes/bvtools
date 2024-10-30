@@ -75,7 +75,7 @@ def extract_pages(path: Path | str, pages: int | str, output_dir: Path | str | N
         output_dir = Path(output_dir)
     else:
         output_dir = path.parent
-    output_path = output_dir / (path.stem + f"_pages_{pages}")
+    output_path = output_dir / (path.stem + f"_pages_{pages}.pdf")
     if output_path.exists():
         return output_path
     cmd = ["qpdf", str(path), "--pages", ".", pages, "--", str(output_path)]
