@@ -1,4 +1,8 @@
 import inspect
+import subprocess
+import shlex
+import platform
+import os
 import re
 from typing import Callable
 
@@ -115,3 +119,15 @@ def confirm_action(
     if not yes and no_func:
         return no_func()
     return yes
+
+
+def open_file_with_default_program(path: str | Path) -> None:
+    path = str(path)
+    if platform.system() == 'Darwin':
+        # MacOS
+        os.system(f'open "{path}"')
+    elif platform.system() == 'Windows':
+        os.startfile(path)
+    else:
+        # Linux
+        os.system(f'xdg-open "{path}"')
