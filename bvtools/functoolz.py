@@ -9,8 +9,16 @@ from collections.abc import Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial, reduce, wraps
 from multiprocessing.pool import AsyncResult, ThreadPool
-from typing import (Any, Awaitable, Callable, Iterable, ParamSpec, Protocol,
-                    TypeVar, cast)
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    Iterable,
+    ParamSpec,
+    Protocol,
+    TypeVar,
+    cast,
+)
 
 # Configure logging
 logger = logging.getLogger(__name__)

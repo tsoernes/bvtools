@@ -1218,3 +1218,43 @@ class FilterCount:
 
         self.count_true += 1
         return nxt
+
+
+@curried
+def map_nth(func, n: int, iterable):
+    return map(lambda seq: seq[:n] + type(seq)([func(seq[n])]) + seq[n + 1 :], iterable)
+
+
+@curried
+def lmap_nth(func, n: int, iterable):
+    return list(map_nth(func, n, iterable))
+
+
+@curried
+def map_fst(func, iterable):
+    return map_nth(func, 0, iterable)
+
+
+@curried
+def map_snd(func, iterable):
+    return map_nth(func, 1, iterable)
+
+
+@curried
+def map_third(func, iterable):
+    return map_nth(func, 2, iterable)
+
+
+@curried
+def lmap_fst(func, iterable):
+    return list(map_nth(func, 0, iterable))
+
+
+@curried
+def lmap_snd(func, iterable):
+    return list(map_nth(func, 1, iterable))
+
+
+@curried
+def lmap_third(func, iterable):
+    return list(map_nth(func, 2, iterable))
